@@ -11,8 +11,13 @@ def start_message(message):
     btn2 = types.KeyboardButton("Я пока не знаю, что купить") 
     markup.add(btn1, btn2) 
     bot.send_message(message.chat.id, text="Здравствуйте! Я бот-консультант. Подскажите, знаете ли вы, что вы хотите приобрести?".format(message.from_user), reply_markup=markup) 
+    
+@bot.message_handler(content_types=['text'])
+def func(message):
     if message.text == "Я знаю, что купить":
         bot.send_message(message.chat.id, text="Заебись")
+    else:
+        bot.send_message(message.chat.id, text="Хуево")  
  
 @bot.message_handler(content_types=["new_chat_members"]) 
 def foo(message): 
