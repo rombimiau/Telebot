@@ -2,6 +2,8 @@ import telebot
 from telebot import types 
  
 bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8') 
+
+collections = ["каки", "баки", "сраки"] # загнать данные таблицы
  
  
 @bot.message_handler(commands=['start']) 
@@ -10,15 +12,29 @@ def start_message(message):
     btn1 = types.KeyboardButton("Я знаю, что купить") 
     btn2 = types.KeyboardButton("Я пока не знаю, что купить") 
     markup.add(btn1, btn2) 
-    bot.send_message(message.chat.id, text="Здравствуйте! Я бот-консультант. Подскажите, знаете ли вы, что вы хотите приобрести?".format(message.from_user), reply_markup=markup) 
+    bot.send_message(message.chat.id, text="Здравствуйте! Я бот-консультант. Подскажите, знаете ли вы, что вы хотите приобрести?", reply_markup=markup) 
     
 @bot.message_handler(content_types=['text'])
 def func(message):
     if message.text == "Я знаю, что купить":
-        bot.send_message(message.chat.id, text="Заебись")
-    else:
-        bot.send_message(message.chat.id, text="Хуево")  
- 
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        buttons = []
+        for i in collections:
+            markup.add(types.KeyboardButton(i))
+        back = types.KeyboardButton("Вернуться в главное меню")
+        markup.add(back)
+        bot.send_message(message.chat.id, text="Выберите коллекцию", reply_markup=markup)
+    elif message.text == "Я пока не знаю, что купить":
+        bot.send_message(message.chat.id, text="Эта функция пока недоступна")  
+    elif message.text in collections:
+        bot.send_message(message.chat.id, text=f"В работе {collections.index(message.text)}") # тут сделать кнопки с продуктами
+    elif message.text == "Вернуться в главное меню":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True) 
+        btn1 = types.KeyboardButton("Я знаю, что купить") 
+        btn2 = types.KeyboardButton("Я пока не знаю, что купить") 
+        markup.add(btn1, btn2) 
+        bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=markup) 
+    
 @bot.message_handler(content_types=["new_chat_members"]) 
 def foo(message): 
     user_name = message.new_chat_members[0].username 
