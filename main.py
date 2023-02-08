@@ -5,6 +5,7 @@ from telebot import types
 bot = telebot.TeleBot('6014185774:AAHXJvlGhdcsQFvKqU1MQSio9g_NVCcEa34') 
 data = pd.read_csv("test_cat.csv")
 collections = list(set(data['Коллекция'])) 
+# print(data[data['Коллекция'] == 'каки']['название'])
  
  
 @bot.message_handler(commands=['start']) 
@@ -31,7 +32,8 @@ def func(message):
         goods_list = []
         new_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         for i in range(len(list(data[data['Коллекция'] == message.text]['название']))):
-            bot.send_message(message.chat.id, text=f"{list(data[data['Коллекция'] == message.text]['название'])[i]}") # тут сделать кнопки с продуктами
+            current_good = list(data[data['Коллекция'] == message.text]['название'])[i]
+            bot.send_message(message.chat.id, text=f"{i + 1}. {current_good}. {list(data[data['название'] == current_good]['Наличие'])[0]} в наличии.") # тут сделать кнопки с продуктами
             goods_list.append(types.KeyboardButton(list(data[data['Коллекция'] == message.text]['название'])[0]))
             new_markup.add(types.KeyboardButton(list(data[data['Коллекция'] == message.text]['название'])[i]))
         bot.send_message(message.chat.id, text="Выберите товар", reply_markup=new_markup)
@@ -41,4 +43,5 @@ def func(message):
         btn2 = types.KeyboardButton("Я пока не знаю, что купить") 
         markup.add(btn1, btn2) 
         bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=markup) 
-    
+
+bot.polling(none_stop=True)
