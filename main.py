@@ -8,9 +8,11 @@ bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8')
 def start_message(message): 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True) 
     btn1 = types.KeyboardButton("Я знаю, что купить") 
-    btn2 = types.KeyboardButton("я пока не знаю, что купить") 
+    btn2 = types.KeyboardButton("Я пока не знаю, что купить") 
     markup.add(btn1, btn2) 
     bot.send_message(message.chat.id, text="Здравствуйте! Я бот-консультант. Подскажите, знаете ли вы, что вы хотите приобрести?".format(message.from_user), reply_markup=markup) 
+    if message.text == "Я знаю, что купить":
+        bot.send_message(message.chat.id, text="Заебись".format(message.from_user))
  
  
 @bot.message_handler(content_types=["new_chat_members"]) 
