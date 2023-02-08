@@ -2,7 +2,7 @@ import telebot
 import pandas as pd
 from telebot import types 
  
-bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8') 
+bot = telebot.TeleBot('6014185774:AAHXJvlGhdcsQFvKqU1MQSio9g_NVCcEa34') 
 data = pd.read_csv("test_cat.csv")
 collections = list(set(data['Коллекция'])) 
  
@@ -28,7 +28,13 @@ def func(message):
     elif message.text == "Я пока не знаю, что купить":
         bot.send_message(message.chat.id, text="Эта функция пока недоступна")  
     elif message.text in collections:
-        bot.send_message(message.chat.id, text=f"В работе {collections[collections['Коллекция'] == message.text]['Название']}") # тут сделать кнопки с продуктами
+        goods_list = []
+        new_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for i in range(len(list(data[data['Коллекция'] == message.text]['название']))):
+            bot.send_message(message.chat.id, text=f"{list(data[data['Коллекция'] == message.text]['название'])[i]}") # тут сделать кнопки с продуктами
+            goods_list.append(types.KeyboardButton(list(data[data['Коллекция'] == message.text]['название'])[0]))
+            new_markup.add(types.KeyboardButton(list(data[data['Коллекция'] == message.text]['название'])[i]))
+        bot.send_message(message.chat.id, text="Выберите товар", reply_markup=new_markup)
     elif message.text == "Вернуться в главное меню":
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True) 
         btn1 = types.KeyboardButton("Я знаю, что купить") 
@@ -36,9 +42,3 @@ def func(message):
         markup.add(btn1, btn2) 
         bot.send_message(message.chat.id, text="Вы вернулись в главное меню", reply_markup=markup) 
     
-@bot.message_handler(content_types=["new_chat_members"]) 
-def foo(message): 
-    user_name = message.new_chat_members[0].username 
-    bot.reply_to(message, f"welcome @{user_name}") 
-    bot.send_photo(message.chat.id, open("C://Users//Roma//Desktop//photo_2023-01-13_13-23-27 (2).jpg", 'rb'), caption='Джими рад тебя видеть') 
-bot.polling(none_stop=True)
