@@ -1,9 +1,10 @@
 import telebot 
+import pandas as pd
 from telebot import types 
  
 bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8') 
-
-collections = ["каки", "баки", "сраки"] # загнать данные таблицы
+data = pd.read_csv("test_cat.csv")
+collections = list(set(data['Коллекция'])) 
  
  
 @bot.message_handler(commands=['start']) 
@@ -27,7 +28,7 @@ def func(message):
     elif message.text == "Я пока не знаю, что купить":
         bot.send_message(message.chat.id, text="Эта функция пока недоступна")  
     elif message.text in collections:
-        bot.send_message(message.chat.id, text=f"В работе {collections.index(message.text)}") # тут сделать кнопки с продуктами
+        bot.send_message(message.chat.id, text=f"В работе {collections[collections['Коллекция'] == message.text]['Название']}") # тут сделать кнопки с продуктами
     elif message.text == "Вернуться в главное меню":
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True) 
         btn1 = types.KeyboardButton("Я знаю, что купить") 
