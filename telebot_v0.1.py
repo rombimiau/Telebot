@@ -5,7 +5,7 @@ bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8')
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id,"Привет ✌️ ")
+    bot.send_message(message.chat.id,"Привет привет ✌️ ")
 
 
 @bot.message_handler(content_types=["new_chat_members"])
