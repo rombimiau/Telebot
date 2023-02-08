@@ -2,7 +2,7 @@ import telebot
 import pandas as pd
 from telebot import types 
  
-bot = telebot.TeleBot('6014185774:AAHXJvlGhdcsQFvKqU1MQSio9g_NVCcEa34') 
+bot = telebot.TeleBot('5873726528:AAFY5G4Z_qNnyIyBTzGZzWrKyDXY5M0m_b8') 
 data = pd.read_csv("test_cat.csv")
 collections = list(set(data['Коллекция'])) 
 # print(data[data['Коллекция'] == 'каки']['название'])
