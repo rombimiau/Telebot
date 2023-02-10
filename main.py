@@ -12,6 +12,8 @@ global current_step
 global current_catal
 global new_markup
 global current_good
+global current_korzina
+current_korzina = {'Название':[], 'Количество':[], 'Цена':[]}
 current_step = 0
 
 
@@ -60,28 +62,58 @@ def third_step(message):
     global new_markup
     global current_step 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.KeyboardButton("Назад"))
     if message.text in current_catal:
         current_good = message.text 
-        bot.send_message(message.chat.id, text="Введите количество:", reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, text="Введите количество:", reply_markup=markup)
         current_step = 4
     elif message.text not in current_catal:
         print(message.text, current_catal)
         current_step = 2
     if current_step == 2:
-        bot.send_message(message.chat.id, text="В этой коллекции нет такого товара.", reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, text="В этой коллекции нет такого товара.", reply_markup=markup)
         new_markup.add(types.KeyboardButton(current_catal))
         second_step(message)
+    print(message.text, 3)
 
 
 
 def fourth_step(message):
+    global current_korzina
+    global current_step
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add(types.KeyboardButton("Закончить покупки."))
+    markup.add(types.KeyboardButton("Продолжить покупки."))
+    print(message.text, 4)
     if int(message.text) <= list(data[data['название'] == current_good]['Наличие'])[0]:
-        bot.send_message(message.chat.id, text="Товар успешно добавлен в корзину.")
+        current_korzina['Название'].append(current_good)
+        current_korzina['Количество'].append(message.text)
+        current_korzina['Цена'].append(list(data[data['название'] == current_good]['Цена '])[0])
         current_step = 5
+        bot.send_message(message.chat.id, text="Товар успешно добавлен в корзину. Хотите продолжить покупки?", reply_markup=markup)
     elif int(message.text) > list(data[data['название'] == current_good]['Наличие'])[0]:
-        bot.send_message(message.chat.id, text="Столько товара нету в наличии. Введите допустимое значение:")
+        bot.send_message(message.chat.id, text="Столько товара нету в наличии. Введите допустимое значение:", reply_markup=markup)
         current_step = 4
+
+
+def fifth_step(message):
+    global current_step
+    if message.text == "Закончить покупки.":
+        sum = 0
+        response = 'Ваша корзина: \n'
+        print(current_korzina)
+        for i in range(len(current_korzina['Название'])):
+            response += (f'{i + 1}. {current_korzina["Название"][i]}, {current_korzina["Количество"][i]} шт., {current_korzina["Цена"][i]} р. \n')
+            sum += (int(current_korzina["Количество"][i]) * int(current_korzina["Цена"][i]))
+        response += f'Общая стоимость: {sum} p.'
+        bot.send_message(message.chat.id, text=response)
+        current_step = 6
+    elif message.text == 'Продолжить покупки.':
+        current_step = 1
+        first_step(message)
+
+
+    
 
 @bot.message_handler(commands=['start']) 
 def start_message(message): 
@@ -95,18 +127,24 @@ def func(message):
     if message.text == "Я знаю, что купить":
         first_step(message)
     elif message.text == "Я пока не знаю, что купить":
-        bot.send_message(message.chat.id, text="Эта функция пока недоступна")  
+        bot.send_message(message.chat.id, text="Эта функция пока недоступна")
     elif message.text in collections:
         second_step(message)
     elif message.text == "Назад":
         if current_step == 2:
             first_step(message)
-        if current_step == 1:
+        elif current_step == 1:
             start(message)
+        elif current_step == 3:
+            second_step(message)
+        elif current_step == 4:
+            third_step(message)
     elif (current_step == 3):
         third_step(message)
     elif current_step == 4:
         fourth_step(message)
+    elif current_step == 5:
+        fifth_step(message)
 
 
-bot.polling(none_stop=True)  
+bot.polling(none_stop=True)
