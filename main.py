@@ -15,7 +15,7 @@ global current_good
 global current_korzina
 current_korzina = {'Название':[], 'Количество':[], 'Цена':[]}
 current_step = 0
-
+# mi
 
 def start(message):
     global current_step
